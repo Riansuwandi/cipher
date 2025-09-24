@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cryptosystem Web</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container py-4">
+  <h2 class="text-center mb-4">Simple Cryptosystems</h2>
+  
+  <form method="POST" enctype="multipart/form-data">
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" id="cipherTabs" role="tablist">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#shift">Shift</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#sub">Substitution</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#affine">Affine</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#vigenere">Vigenère</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#hill">Hill</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#perm">Permutation</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#playfair">Playfair</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#otp">One-Time Pad</a></li>
+    </ul>
+
+    <div class="tab-content border border-top-0 p-3 bg-white">
+      <!-- Shift -->
+      <div class="tab-pane fade show active" id="shift">
+        <input type="hidden" name="cipher" value="shift">
+        <div class="mb-3">
+          <label class="form-label">Input Text / Upload File</label>
+          <textarea class="form-control" name="text" rows="3"></textarea>
+          <input type="file" class="form-control mt-2" name="file">
+        </div>
+        <div class="mb-3">
+          <label>Shift Key (0-25)</label>
+          <input type="number" class="form-control" name="shift_key" value="3">
+        </div>
+      </div>
+
+      <!-- Substitution -->
+      <div class="tab-pane fade" id="sub">
+        <input type="hidden" name="cipher" value="sub">
+        <div class="mb-3">
+          <label>Input Text / Upload File</label>
+          <textarea class="form-control" name="text" rows="3"></textarea>
+          <input type="file" class="form-control mt-2" name="file">
+        </div>
+        <div class="mb-3">
+          <label>Substitution Key (26 letters)</label>
+          <input type="text" class="form-control" name="sub_key" value="ZYXWVUTSRQPONMLKJIHGFEDCBA">
+        </div>
+      </div>
+
+      <!-- Affine -->
+      <div class="tab-pane fade" id="affine">
+        <input type="hidden" name="cipher" value="affine">
+        <div class="mb-3">
+          <label>Input Text / Upload File</label>
+          <textarea class="form-control" name="text" rows="3"></textarea>
+          <input type="file" class="form-control mt-2" name="file">
+        </div>
+        <div class="row">
+          <div class="col">
+            <label>a</label>
+            <input type="number" class="form-control" name="affine_a" value="5">
+          </div>
+          <div class="col">
+            <label>b</label>
+            <input type="number" class="form-control" name="affine_b" value="8">
+          </div>
+        </div>
+      </div>
+
+      <!-- Vigenere -->
+      <div class="tab-pane fade" id="vigenere">
+        <input type="hidden" name="cipher" value="vig">
+        <div class="mb-3">
+          <label>Input Text / Upload File</label>
+          <textarea class="form-control" name="text" rows="3"></textarea>
+          <input type="file" class="form-control mt-2" name="file">
+        </div>
+        <div class="mb-3">
+          <label>Keyword</label>
+          <input type="text" class="form-control" name="vig_key" value="CRYPTO">
+        </div>
+      </div>
+
+      <!-- Hill -->
+      <div class="tab-pane fade" id="hill">
+        <input type="hidden" name="cipher" value="hill">
+        <div class="mb-3">
+          <label>Input Text / Upload File</label>
+          <textarea class="form-control" name="text" rows="3"></textarea>
+          <input type="file" class="form-control mt-2" name="file">
+        </div>
+        <label>2x2 Matrix Key</label>
+        <div class="row">
+          <div class="col"><input type="number" name="m00" class="form-control" value="3"></div>
+          <div class="col"><input type="number" name="m01" class="form-control" value="2"></div>
+        </div>
+        <div class="row mt-2">
+          <div class="col"><input type="number" name="m10" class="form-control" value="5"></div>
+          <div class="col"><input type="number" name="m11" class="form-control" value="1"></div>
+        </div>
+      </div>
+
+      <!-- Permutation -->
+      <div class="tab-pane fade" id="perm">
+        <input type="hidden" name="cipher" value="perm">
+        <div class="mb-3">
+          <label>Input Text / Upload File</label>
+          <textarea class="form-control" name="text" rows="3"></textarea>
+          <input type="file" class="form-control mt-2" name="file">
+        </div>
+        <div class="mb-3">
+          <label>Permutation Key (e.g. 3 1 4 2 5)</label>
+          <input type="text" class="form-control" name="perm_key" value="3 1 4 2 5">
+        </div>
+      </div>
+
+      <!-- Playfair -->
+      <div class="tab-pane fade" id="playfair">
+        <input type="hidden" name="cipher" value="playfair">
+        <div class="mb-3">
+          <label>Input Text / Upload File</label>
+          <textarea class="form-control" name="text" rows="3"></textarea>
+          <input type="file" class="form-control mt-2" name="file">
+        </div>
+        <div class="mb-3">
+          <label>Playfair Key</label>
+          <input type="text" class="form-control" name="playfair_key" value="KEYWORD">
+        </div>
+      </div>
+
+      <!-- OTP -->
+      <div class="tab-pane fade" id="otp">
+        <input type="hidden" name="cipher" value="otp">
+        <div class="mb-3">
+          <label>Input Text / Upload File</label>
+          <textarea class="form-control" name="text" rows="3"></textarea>
+          <input type="file" class="form-control mt-2" name="file">
+        </div>
+        <div class="mb-3">
+          <label>Upload OTP Key File</label>
+          <input type="file" class="form-control" name="keyfile">
+        </div>
+      </div>
+    </div>
+
+    <!-- Output format -->
+    <div class="mt-3">
+      <label class="form-label">Output Format:</label><br>
+      <input type="radio" name="format" value="normal" checked> Normal
+      <input type="radio" name="format" value="nospace"> No Spaces
+      <input type="radio" name="format" value="groups"> 5-Letter Groups
+    </div>
+
+    <!-- Buttons -->
+    <div class="mt-3">
+      <button type="submit" name="action" value="Encrypt" class="btn btn-primary">Encrypt</button>
+      <button type="submit" name="action" value="Decrypt" class="btn btn-success">Decrypt</button>
+      <input type="checkbox" name="download" value="yes"> Download as file
+    </div>
+  </form>
+
+  <!-- Output -->
+  {% if output %}
+  <div class="alert alert-info mt-4">
+    <h5>Output:</h5>
+    <pre>{{ output }}</pre>
+  </div>
+  {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
