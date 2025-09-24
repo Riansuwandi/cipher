@@ -155,7 +155,12 @@ def save():
     data=request.form.get("output","")
     if not data: return redirect(url_for("index"))
     bio=io.BytesIO(data.encode("utf-8"))
-    return send_file(bio,as_attachment=True,download_name="ciphertext.txt")
+    return send_file(
+        bio,
+        as_attachment=True,
+        download_name="ciphertext.txt",
+        mimetype="text/plain"
+    )
 
 if __name__=="__main__":
     app.run(debug=True)
