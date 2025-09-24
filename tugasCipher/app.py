@@ -6,12 +6,12 @@ from string import ascii_uppercase
 app = Flask(__name__)
 app.secret_key = "change-this"
 
-# ========= Utility =========
-ALPHA = ascii_uppercase
-A2I = {c: i for i, c in enumerate(ALPHA)}
+# ===== Utility =====
+ALPHA = ascii_uppercase.replace("J", "")  # untuk Playfair
+A2I = {c: i for i, c in enumerate(ascii_uppercase)}
 
 def char_to_num(c): return A2I[c.upper()]
-def num_to_char(n): return ALPHA[n % 26]
+def num_to_char(n): return ascii_uppercase[n % 26]
 
 def gcd(a,b):
     while b: a,b = b,a%b
@@ -37,24 +37,23 @@ def format_output(text, fmt):
         return ' '.join([clean[i:i+5] for i in range(0,len(clean),5)])
     return text
 
-# ========= Cipher functions =========
+# ===== Cipher Functions =====
 def shift(text,key,enc=True):
     res=""
     for ch in text.upper():
         if ch.isalpha():
             res+=num_to_char(char_to_num(ch)+(key if enc else -key))
-        else:
-            res+=ch
+        else: res+=ch
     return res
 
 def substitution(text,key,enc=True):
     key=key.upper()
     if len(key)!=26 or len(set(key))!=26:
-        raise ValueError("Substitution key must be 26 unique letters")
+        raise ValueError("Key must be 26 unique letters")
     if enc:
-        table={ALPHA[i]:key[i] for i in range(26)}
+        table={ascii_uppercase[i]:key[i] for i in range(26)}
     else:
-        table={key[i]:ALPHA[i] for i in range(26)}
+        table={key[i]:ascii_uppercase[i] for i in range(26)}
     return ''.join(table.get(ch,ch) for ch in text.upper())
 
 def affine(text,a,b,enc=True):
@@ -70,11 +69,10 @@ def vigenere(text,key,enc=True):
     res=""; j=0
     for ch in text.upper():
         if ch.isalpha():
-            shift=char_to_num(key[j%len(key)].upper())
-            res+=num_to_char(char_to_num(ch)+(shift if enc else -shift))
+            shift_val=char_to_num(key[j%len(key)].upper())
+            res+=num_to_char(char_to_num(ch)+(shift_val if enc else -shift_val))
             j+=1
-        else:
-            res+=ch
+        else: res+=ch
     return res
 
 def hill(text,M,enc=True):
@@ -111,7 +109,71 @@ def permutation(text,key_nums,enc=True):
             out.append(''.join(d))
         return ''.join(out)
 
-# ========= Routes =========
+# ===== Playfair =====
+def generate_playfair_table(key):
+    key = key.upper().replace("J", "I")
+    table = ""
+    for c in key:
+        if c not in table and c in ascii_uppercase.replace("J",""):
+            table+=c
+    for c in ascii_uppercase.replace("J",""):
+        if c not in table:
+            table+=c
+    return [list(table[i*5:(i+1)*5]) for i in range(5)]
+
+def find_position(table, ch):
+    for r in range(5):
+        for c in range(5):
+            if table[r][c]==ch: return r,c
+    return None,None
+
+def playfair(text,key,enc=True):
+    table=generate_playfair_table(key)
+    t=''.join([c for c in text.upper() if c.isalpha()]).replace("J","I")
+    pairs=[]
+    i=0
+    while i<len(t):
+        a=t[i]
+        b=t[i+1] if i+1<len(t) else 'X'
+        if a==b: 
+            pairs.append((a,'X'))
+            i+=1
+        else:
+            pairs.append((a,b))
+            i+=2
+    res=""
+    for a,b in pairs:
+        r1,c1=find_position(table,a)
+        r2,c2=find_position(table,b)
+        if r1==r2:
+            if enc:
+                res+=table[r1][(c1+1)%5]+table[r2][(c2+1)%5]
+            else:
+                res+=table[r1][(c1-1)%5]+table[r2][(c2-1)%5]
+        elif c1==c2:
+            if enc:
+                res+=table[(r1+1)%5][c1]+table[(r2+1)%5][c2]
+            else:
+                res+=table[(r1-1)%5][c1]+table[(r2-1)%5][c2]
+        else:
+            res+=table[r1][c2]+table[r2][c1]
+    return res
+
+# ===== One Time Pad =====
+def otp(text,key,enc=True):
+    t=''.join([c for c in text.upper() if c.isalpha()])
+    k=''.join([c for c in key.upper() if c.isalpha()])
+    if len(k)<len(t): raise ValueError("OTP key too short")
+    res=""
+    for i,ch in enumerate(t):
+        shift_val=char_to_num(k[i])
+        if enc:
+            res+=num_to_char(char_to_num(ch)+shift_val)
+        else:
+            res+=num_to_char(char_to_num(ch)-shift_val)
+    return res
+
+# ===== Routes =====
 @app.route("/", methods=["GET","POST"])
 def index():
     output=None
@@ -120,6 +182,13 @@ def index():
         action=request.form["action"]
         fmt=request.form.get("format","normal")
         text=request.form.get("input_text","")
+
+        # handle file input
+        if "file_input" in request.files:
+            f=request.files["file_input"]
+            if f and f.filename:
+                text=f.read().decode("utf-8")
+
         try:
             if cipher=="shift":
                 key=int(request.form["shift_key"])
@@ -142,12 +211,24 @@ def index():
             elif cipher=="perm":
                 key_nums=list(map(int,request.form["perm_key"].split()))
                 result=permutation(text,key_nums,enc=(action=="Encrypt"))
+            elif cipher=="playfair":
+                key=request.form["playfair_key"]
+                result=playfair(text,key,enc=(action=="Encrypt"))
+            elif cipher=="otp":
+                if "otp_key_file" in request.files:
+                    f=request.files["otp_key_file"]
+                    key=f.read().decode("utf-8")
+                else:
+                    raise ValueError("OTP key file required")
+                result=otp(text,key,enc=(action=="Encrypt"))
             else:
                 raise ValueError("Unknown cipher")
 
             output=format_output(result,fmt)
         except Exception as e:
             flash(str(e),"danger")
+    else:
+        output=None
     return render_template("index.html",output=output)
 
 @app.route("/save",methods=["POST"])
@@ -155,12 +236,7 @@ def save():
     data=request.form.get("output","")
     if not data: return redirect(url_for("index"))
     bio=io.BytesIO(data.encode("utf-8"))
-    return send_file(
-        bio,
-        as_attachment=True,
-        download_name="ciphertext.txt",
-        mimetype="text/plain"
-    )
+    return send_file(bio,as_attachment=True,download_name="ciphertext.txt")
 
 if __name__=="__main__":
     app.run(debug=True)

@@ -32,7 +32,8 @@
   </ul>
 
   <div class="tab-content card p-4">
-    <!-- Shift -->
+
+    <!-- ===== Shift ===== -->
     <div class="tab-pane fade show active" id="shift">
       <form method="POST" enctype="multipart/form-data">
         <input type="hidden" name="cipher" value="shift">
@@ -42,8 +43,8 @@
           <input type="file" class="form-control mt-2" name="file_input">
         </div>
         <div class="mb-3">
-          <label class="form-label">Shift Key (0-25)</label>
-          <input type="number" class="form-control" name="shift_key" placeholder="e.g. 3">
+          <label class="form-label">Shift Key (0–25)</label>
+          <input type="number" class="form-control" name="shift_key">
         </div>
         <div class="mb-3">
           <label class="form-label">Output Format</label><br>
@@ -58,7 +59,7 @@
       </form>
     </div>
 
-    <!-- Substitution -->
+    <!-- ===== Substitution ===== -->
     <div class="tab-pane fade" id="sub">
       <form method="POST" enctype="multipart/form-data">
         <input type="hidden" name="cipher" value="sub">
@@ -69,7 +70,7 @@
         </div>
         <div class="mb-3">
           <label class="form-label">Substitution Key (26 letters)</label>
-          <input type="text" class="form-control" name="sub_key" placeholder="ZYXWVUTSRQPONMLKJIHGFEDCBA">
+          <input type="text" class="form-control" name="sub_key">
         </div>
         <div class="mb-3">
           <label class="form-label">Output Format</label><br>
@@ -84,7 +85,7 @@
       </form>
     </div>
 
-    <!-- Affine -->
+    <!-- ===== Affine ===== -->
     <div class="tab-pane fade" id="affine">
       <form method="POST" enctype="multipart/form-data">
         <input type="hidden" name="cipher" value="affine">
@@ -95,15 +96,15 @@
         </div>
         <div class="row">
           <div class="col">
-            <label class="form-label">a (coprime with 26)</label>
-            <input type="number" class="form-control" name="a" placeholder="e.g. 5">
+            <label class="form-label">Affine a</label>
+            <input type="number" class="form-control" name="a">
           </div>
           <div class="col">
-            <label class="form-label">b (0-25)</label>
-            <input type="number" class="form-control" name="b" placeholder="e.g. 8">
+            <label class="form-label">Affine b</label>
+            <input type="number" class="form-control" name="b">
           </div>
         </div>
-        <div class="mb-3 mt-3">
+        <div class="mb-3 mt-2">
           <label class="form-label">Output Format</label><br>
           <input type="radio" name="format" value="normal" checked> Normal
           <input type="radio" name="format" value="nospace"> No Spaces
@@ -116,7 +117,7 @@
       </form>
     </div>
 
-    <!-- Vigenere -->
+    <!-- ===== Vigenere ===== -->
     <div class="tab-pane fade" id="vig">
       <form method="POST" enctype="multipart/form-data">
         <input type="hidden" name="cipher" value="vig">
@@ -126,8 +127,8 @@
           <input type="file" class="form-control mt-2" name="file_input">
         </div>
         <div class="mb-3">
-          <label class="form-label">Keyword</label>
-          <input type="text" class="form-control" name="vig_key" placeholder="e.g. CRYPTO">
+          <label class="form-label">Vigenère Keyword</label>
+          <input type="text" class="form-control" name="vig_key">
         </div>
         <div class="mb-3">
           <label class="form-label">Output Format</label><br>
@@ -142,7 +143,7 @@
       </form>
     </div>
 
-    <!-- Hill -->
+    <!-- ===== Hill ===== -->
     <div class="tab-pane fade" id="hill">
       <form method="POST" enctype="multipart/form-data">
         <input type="hidden" name="cipher" value="hill">
@@ -154,12 +155,10 @@
         <div class="row">
           <div class="col"><input type="number" class="form-control" name="m00" placeholder="m00"></div>
           <div class="col"><input type="number" class="form-control" name="m01" placeholder="m01"></div>
-        </div>
-        <div class="row mt-2">
           <div class="col"><input type="number" class="form-control" name="m10" placeholder="m10"></div>
           <div class="col"><input type="number" class="form-control" name="m11" placeholder="m11"></div>
         </div>
-        <div class="mb-3 mt-3">
+        <div class="mb-3 mt-2">
           <label class="form-label">Output Format</label><br>
           <input type="radio" name="format" value="normal" checked> Normal
           <input type="radio" name="format" value="nospace"> No Spaces
@@ -172,7 +171,7 @@
       </form>
     </div>
 
-    <!-- Permutation -->
+    <!-- ===== Permutation ===== -->
     <div class="tab-pane fade" id="perm">
       <form method="POST" enctype="multipart/form-data">
         <input type="hidden" name="cipher" value="perm">
@@ -182,8 +181,8 @@
           <input type="file" class="form-control mt-2" name="file_input">
         </div>
         <div class="mb-3">
-          <label class="form-label">Permutation Key (space-separated numbers)</label>
-          <input type="text" class="form-control" name="perm_key" placeholder="e.g. 3 1 4 2">
+          <label class="form-label">Permutation Key (e.g. "3 1 4 2")</label>
+          <input type="text" class="form-control" name="perm_key">
         </div>
         <div class="mb-3">
           <label class="form-label">Output Format</label><br>
@@ -197,63 +196,64 @@
         </div>
       </form>
     </div>
+
+    <!-- ===== Playfair ===== -->
+    <div class="tab-pane fade" id="playfair">
+      <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="cipher" value="playfair">
+        <div class="mb-3">
+          <label class="form-label">Input Text / Upload File</label>
+          <textarea class="form-control" name="input_text" rows="3"></textarea>
+          <input type="file" class="form-control mt-2" name="file_input">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Playfair Key</label>
+          <input type="text" class="form-control" name="playfair_key">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Output Format</label><br>
+          <input type="radio" name="format" value="normal" checked> Normal
+          <input type="radio" name="format" value="nospace"> No Spaces
+          <input type="radio" name="format" value="groups"> 5-Letter Groups
+        </div>
+        <div class="mb-3">
+          <button class="btn btn-primary" type="submit" name="action" value="Encrypt">Encrypt</button>
+          <button class="btn btn-success" type="submit" name="action" value="Decrypt">Decrypt</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ===== OTP ===== -->
+    <div class="tab-pane fade" id="otp">
+      <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="cipher" value="otp">
+        <div class="mb-3">
+          <label class="form-label">Input Text / Upload File</label>
+          <textarea class="form-control" name="input_text" rows="3"></textarea>
+          <input type="file" class="form-control mt-2" name="file_input">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Upload OTP Key File</label>
+          <input type="file" class="form-control" name="otp_key_file">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Output Format</label><br>
+          <input type="radio" name="format" value="normal" checked> Normal
+          <input type="radio" name="format" value="nospace"> No Spaces
+          <input type="radio" name="format" value="groups"> 5-Letter Groups
+        </div>
+        <div class="mb-3">
+          <button class="btn btn-primary" type="submit" name="action" value="Encrypt">Encrypt</button>
+          <button class="btn btn-success" type="submit" name="action" value="Decrypt">Decrypt</button>
+        </div>
+      </form>
+    </div>
+
   </div>
 
-  <!-- Playfair -->
-  <div class="tab-pane fade" id="playfair">
-    <form method="POST" enctype="multipart/form-data">
-      <input type="hidden" name="cipher" value="playfair">
-      <div class="mb-3">
-        <label class="form-label">Input Text / Upload File</label>
-        <textarea class="form-control" name="input_text" rows="3"></textarea>
-        <input type="file" class="form-control mt-2" name="file_input">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Keyword (untuk 5x5 grid)</label>
-        <input type="text" class="form-control" name="playfair_key" placeholder="contoh: MONARCHY">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Output Format</label><br>
-        <input type="radio" name="format" value="normal" checked> Normal
-        <input type="radio" name="format" value="nospace"> No Spaces
-        <input type="radio" name="format" value="groups"> 5-Letter Groups
-      </div>
-      <div class="mb-3">
-        <button class="btn btn-primary" type="submit" name="action" value="Encrypt">Encrypt</button>
-        <button class="btn btn-success" type="submit" name="action" value="Decrypt">Decrypt</button>
-      </div>
-    </form>
-  </div>
-
-  <!-- One-Time Pad -->
-  <div class="tab-pane fade" id="otp">
-    <form method="POST" enctype="multipart/form-data">
-      <input type="hidden" name="cipher" value="otp">
-      <div class="mb-3">
-        <label class="form-label">Input Text / Upload File</label>
-        <textarea class="form-control" name="input_text" rows="3"></textarea>
-        <input type="file" class="form-control mt-2" name="file_input">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Upload Key File (berisi huruf acak A-Z)</label>
-        <input type="file" class="form-control" name="key_file" required>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Output Format</label><br>
-        <input type="radio" name="format" value="normal" checked> Normal
-        <input type="radio" name="format" value="nospace"> No Spaces
-        <input type="radio" name="format" value="groups"> 5-Letter Groups
-      </div>
-      <div class="mb-3">
-        <button class="btn btn-primary" type="submit" name="action" value="Encrypt">Encrypt</button>
-        <button class="btn btn-success" type="submit" name="action" value="Decrypt">Decrypt</button>
-      </div>
-    </form>
-  </div>
-
-  <!-- Output Section -->
+  <!-- Output -->
   {% if output %}
-  <div class="card mt-4 p-4">
+  <div class="card mt-4 p-3">
     <h5>Hasil:</h5>
     <textarea class="form-control" rows="6" readonly>{{ output }}</textarea>
     <form method="POST" action="{{ url_for('save') }}">
