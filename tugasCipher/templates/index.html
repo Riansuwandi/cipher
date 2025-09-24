@@ -197,6 +197,58 @@
     </div>
   </div>
 
+  <!-- Playfair -->
+  <div class="tab-pane fade" id="playfair">
+    <form method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="cipher" value="playfair">
+      <div class="mb-3">
+        <label class="form-label">Input Text / Upload File</label>
+        <textarea class="form-control" name="input_text" rows="3"></textarea>
+        <input type="file" class="form-control mt-2" name="file_input">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Keyword (untuk 5x5 grid)</label>
+        <input type="text" class="form-control" name="playfair_key" placeholder="contoh: MONARCHY">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Output Format</label><br>
+        <input type="radio" name="format" value="normal" checked> Normal
+        <input type="radio" name="format" value="nospace"> No Spaces
+        <input type="radio" name="format" value="groups"> 5-Letter Groups
+      </div>
+      <div class="mb-3">
+        <button class="btn btn-primary" type="submit" name="action" value="Encrypt">Encrypt</button>
+        <button class="btn btn-success" type="submit" name="action" value="Decrypt">Decrypt</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- One-Time Pad -->
+  <div class="tab-pane fade" id="otp">
+    <form method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="cipher" value="otp">
+      <div class="mb-3">
+        <label class="form-label">Input Text / Upload File</label>
+        <textarea class="form-control" name="input_text" rows="3"></textarea>
+        <input type="file" class="form-control mt-2" name="file_input">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Upload Key File (berisi huruf acak A-Z)</label>
+        <input type="file" class="form-control" name="key_file" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Output Format</label><br>
+        <input type="radio" name="format" value="normal" checked> Normal
+        <input type="radio" name="format" value="nospace"> No Spaces
+        <input type="radio" name="format" value="groups"> 5-Letter Groups
+      </div>
+      <div class="mb-3">
+        <button class="btn btn-primary" type="submit" name="action" value="Encrypt">Encrypt</button>
+        <button class="btn btn-success" type="submit" name="action" value="Decrypt">Decrypt</button>
+      </div>
+    </form>
+  </div>
+
   <!-- Output Section -->
   {% if output %}
   <div class="card mt-4 p-4">
