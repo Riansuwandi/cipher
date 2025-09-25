@@ -1,446 +1,791 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <title>Simple Cryptosystems</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRYPTOSYSTEM</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Reset dan Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif; 
+      background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%); 
+      color: #ffffff; 
+      min-height: 100vh; 
+      overflow-x: hidden;
+    }
+
+    /* Main Wrapper untuk Layout */
+    .main-wrapper {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 40px 20px;
+      width: 300px;
+      flex-shrink: 0;
+      overflow-y: auto;
+      box-shadow: 5px 0 40px rgba(0, 0, 0, 0.4);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .sidebar::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+    .sidebar-header {
+      text-align: center;
+      margin-bottom: 40px;
+      flex-shrink: 0;
+    }
+    .main-title {
+      font-weight: 700;
+      color: #ffffff;   
+      font-size: 1.7rem; 
+      margin-bottom: 10px;
+      text-shadow: none;
+    }
+    @keyframes glow {
+      from { filter: drop-shadow(0 0 5px rgba(0, 123, 255, 0.5)); }
+      to { filter: drop-shadow(0 0 20px rgba(255, 105, 180, 0.5)); }
+    }
+    .nav-pills {
+      flex: 1;
+    }
+    .nav-pills .nav-link {
+      color: #b0b0b0;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      margin-bottom: 12px;
+      padding: 12px 20px;
+      font-weight: 500;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      text-align: left;
+    }
+    .nav-pills .nav-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.5s;
+    }
+    .nav-pills .nav-link:hover::before {
+      left: 100%;
+    }
+    .nav-pills .nav-link:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(8px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+    .nav-pills .nav-link.active {
+      color: #ffffff;
+      background: linear-gradient(45deg, #007bff, #ff69b4);
+      border-color: rgba(0, 123, 255, 0.5);
+      box-shadow: 0 10px 25px rgba(0, 123, 255, 0.2);
+      transform: scale(1.02);
+    }
+
+    /* Main Content Styles */
+    .main-content {
+      flex: 1;
+      padding: 50px;
+      border-radius: 20px;
+      background: rgba(30, 30, 30, 0.7); 
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .content-pane {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      animation: fadeIn 0.5s ease-in-out;
+      margin-bottom: 20px;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .cipher-title {
+      color: #ffffff;   
+      font-weight: 700;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+    }
+
+    /* Form Styles */
+    .form-label {
+      font-weight: 500;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+    .form-control, .form-control[readonly] {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 12px 16px;
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+    }
+    .form-control:focus {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(0, 123, 255, 0.5);
+      color: #ffffff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+    }
+    .form-control::placeholder {
+      color: #888;
+    }
+    .form-text {
+      color: #b0b0b0;
+      font-size: 0.875rem;
+    }
+    input[type="file"]::file-selector-button {
+      background: #ffffff;     
+      color: #000000;          
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    input[type="file"]::file-selector-button:hover {
+      background: #f0f0f0;     
+    }
+    input[type="radio"] {
+      accent-color: #007bff;
+      margin-right: 8px;
+    }
+    .row > div {
+      animation: slideIn 0.6s ease-out;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Button Styles */
+    .btn {
+      border-radius: 25px;
+      padding: 12px 30px;
+      font-weight: 500;
+      border: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      font-family: 'Poppins', sans-serif;
+    }
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+    .btn:hover::before {
+      left: 100%;
+    }
+    .btn-primary,
+    .btn-success {
+      background: linear-gradient(45deg, #007bff, #ff69b4);
+      box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+      border: none;
+    }
+    .btn-primary:hover,
+    .btn-success:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0, 123, 255, 0.4);
+    }
+    .btn-secondary {
+      background: linear-gradient(45deg, #6c757d, #545b62);
+      box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+    }
+    .btn-secondary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(108, 117, 125, 0.4);
+    }
+
+    /* Output Section */
+    .output-section {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 30px;
+      margin-top: 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+    .output-title {
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, #007bff, #ff69b4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Alert Styles */
+    .alert {
+      border-radius: 12px;
+      border: none;
+      backdrop-filter: blur(10px);
+      margin-bottom: 20px;
+      color: #ffffff;
+    }
+    .alert-success {
+      background: rgba(40, 167, 69, 0.2);
+      border: 1px solid rgba(40, 167, 69, 0.3);
+    }
+    .alert-warning {
+      background: rgba(255, 193, 7, 0.2);
+      border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+    .alert-danger {
+      background: rgba(220, 53, 69, 0.2);
+      border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+    .alert-info {
+      background: rgba(23, 162, 184, 0.2);
+      border: 1px solid rgba(23, 162, 184, 0.3);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .main-wrapper {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .card {
+        background: linear-gradient(135deg, rgba(30,30,30,0.9), rgba(0,123,255,0.7), rgba(255,105,180,0.7));
+        backdrop-filter: blur(12px);  
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+        color: #fff;
+      }
+      .sidebar-header {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+      .nav-pills {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .nav-pills .nav-link {
+        margin: 5px;
+        text-align: center;
+        padding: 10px 15px;
+        flex: 1 1 45%;
+        min-width: 120px;
+      }
+      .main-content {
+        padding: 20px;
+        width: 100%;
+      }
+      .main-title {
+        font-size: 2rem;
+      }
+      .content-pane {
+        padding: 20px;
+      }
+      .btn {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+    }
+  </style>
 </head>
-<body class="bg-light">
+<body>
 
-<div class="container py-5">
-  <h2 class="text-center mb-4">🔐 Simple Cryptosystems 🔐</h2>
-  <p class="text-center text-muted">Supports both Text and Binary File encryption</p>
-
-  <!-- Flash Messages -->
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">{{ message }}</div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
-
-  <!-- Tabs -->
-  <ul class="nav nav-tabs" id="cipherTabs" role="tablist">
-    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#shift">Shift</a></li>
-    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#sub">Substitution</a></li>
-    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#affine">Affine</a></li>
-    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#vig">Vigenère</a></li>
-    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#hill">Hill</a></li>
-    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#perm">Permutation</a></li>
-    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#playfair">Playfair</a></li>
-    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#otp">One-Time Pad</a></li>
-  </ul>
-
-  <div class="tab-content card p-4">
-
-    <!-- ===== SHIFT CIPHER ===== -->
-    <div class="tab-pane fade show active" id="shift">
-      <h5>🔄 Shift Cipher</h5>
-      <form method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="cipher" value="shift">
-        
-        <!-- INPUT TYPE TOGGLE -->
-        <div class="mb-3">
-          <label class="form-label"><strong>📥 Input Type:</strong></label><br>
-          <input type="radio" id="shift_text" name="input_type" value="text" checked onchange="toggleInputType('shift', this.value)">
-          <label for="shift_text" class="me-3">📝 Text Input</label>
-          <input type="radio" id="shift_file" name="input_type" value="file" onchange="toggleInputType('shift', this.value)">
-          <label for="shift_file">📁 File Upload</label>
-        </div>
-
-        <!-- TEXT INPUT AREA -->
-        <div id="shift_text_area" class="mb-3">
-          <label class="form-label">Input Text</label>
-          <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
-        </div>
-
-        <!-- FILE INPUT AREA -->
-        <div id="shift_file_area" class="mb-3" style="display:none">
-          <label class="form-label">Upload File (any type: .txt, .jpg, .pdf, .docx, etc.)</label>
-          <input type="file" class="form-control" name="file_input">
-          <small class="form-text text-success">✅ Encrypted file will be saved as .dat format</small>
-        </div>
-
-        <!-- CIPHER PARAMETERS -->
-        <div class="mb-3">
-          <label class="form-label">Shift Key</label>
-          <input type="number" class="form-control" name="shift_key" min="0" max="255" placeholder="0-25 for text, 0-255 for files">
-        </div>
-
-        <!-- OUTPUT FORMAT (hanya untuk text) -->
-        <div id="shift_format_area" class="mb-3">
-          <label class="form-label">Output Format (Text mode only)</label><br>
-          <input type="radio" name="format" value="normal" checked> Normal
-          <input type="radio" name="format" value="nospace"> No Spaces
-          <input type="radio" name="format" value="groups"> 5-Letter Groups
-        </div>
-
-        <!-- ACTION BUTTONS -->
-        <div class="mb-3">
-          <button class="btn btn-primary" type="submit" name="action" value="Encrypt">🔒 Encrypt</button>
-          <button class="btn btn-success" type="submit" name="action" value="Decrypt">🔓 Decrypt</button>
-        </div>
-      </form>
+<div class="main-wrapper">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <h1 class="main-title">CRYPTOSYSTEM</h1>
     </div>
-
-    <!-- ===== SUBSTITUTION CIPHER ===== -->
-    <div class="tab-pane fade" id="sub">
-      <h5>🔀 Substitution Cipher</h5>
-      <form method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="cipher" value="sub">
-        
-        <div class="mb-3">
-          <label class="form-label"><strong>📥 Input Type:</strong></label><br>
-          <input type="radio" id="sub_text" name="input_type" value="text" checked onchange="toggleInputType('sub', this.value)">
-          <label for="sub_text" class="me-3">📝 Text Input</label>
-          <input type="radio" id="sub_file" name="input_type" value="file" onchange="toggleInputType('sub', this.value)">
-          <label for="sub_file">📁 File Upload</label>
-        </div>
-
-        <div id="sub_text_area" class="mb-3">
-          <label class="form-label">Input Text</label>
-          <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
-        </div>
-
-        <div id="sub_file_area" class="mb-3" style="display:none">
-          <label class="form-label">Upload File</label>
-          <input type="file" class="form-control" name="file_input">
-          <small class="form-text text-success">✅ Binary substitution using 26-letter key pattern</small>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Substitution Key (26 unique letters)</label>
-          <input type="text" class="form-control" name="sub_key" placeholder="e.g., ZYXWVUTSRQPONMLKJIHGFEDCBA">
-          <small class="form-text text-muted">Each letter A-Z maps to corresponding position in key</small>
-        </div>
-
-        <div id="sub_format_area" class="mb-3">
-          <label class="form-label">Output Format (Text mode only)</label><br>
-          <input type="radio" name="format" value="normal" checked> Normal
-          <input type="radio" name="format" value="nospace"> No Spaces
-          <input type="radio" name="format" value="groups"> 5-Letter Groups
-        </div>
-
-        <div class="mb-3">
-          <button class="btn btn-primary" type="submit" name="action" value="Encrypt">🔒 Encrypt</button>
-          <button class="btn btn-success" type="submit" name="action" value="Decrypt">🔓 Decrypt</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- ===== AFFINE CIPHER ===== -->
-    <div class="tab-pane fade" id="affine">
-      <h5>📐 Affine Cipher</h5>
-      <form method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="cipher" value="affine">
-        
-        <div class="mb-3">
-          <label class="form-label"><strong>📥 Input Type:</strong></label><br>
-          <input type="radio" id="affine_text" name="input_type" value="text" checked onchange="toggleInputType('affine', this.value)">
-          <label for="affine_text" class="me-3">📝 Text Input</label>
-          <input type="radio" id="affine_file" name="input_type" value="file" onchange="toggleInputType('affine', this.value)">
-          <label for="affine_file">📁 File Upload</label>
-        </div>
-
-        <div id="affine_text_area" class="mb-3">
-          <label class="form-label">Input Text</label>
-          <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
-        </div>
-
-        <div id="affine_file_area" class="mb-3" style="display:none">
-          <label class="form-label">Upload File</label>
-          <input type="file" class="form-control" name="file_input">
-          <small class="form-text text-success">✅ Binary affine: (a*x + b) mod 256</small>
-        </div>
-
-        <div class="row">
-          <div class="col">
-            <label class="form-label">Parameter a</label>
-            <input type="number" class="form-control" name="a" placeholder="Must be coprime with 26/256">
-          </div>
-          <div class="col">
-            <label class="form-label">Parameter b</label>
-            <input type="number" class="form-control" name="b" placeholder="Shift value">
-          </div>
-        </div>
-
-        <div id="affine_format_area" class="mb-3 mt-2">
-          <label class="form-label">Output Format (Text mode only)</label><br>
-          <input type="radio" name="format" value="normal" checked> Normal
-          <input type="radio" name="format" value="nospace"> No Spaces
-          <input type="radio" name="format" value="groups"> 5-Letter Groups
-        </div>
-
-        <div class="mb-3">
-          <button class="btn btn-primary" type="submit" name="action" value="Encrypt">🔒 Encrypt</button>
-          <button class="btn btn-success" type="submit" name="action" value="Decrypt">🔓 Decrypt</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- ===== VIGENÈRE CIPHER ===== -->
-    <div class="tab-pane fade" id="vig">
-      <h5>🔑 Vigenère Cipher</h5>
-      <form method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="cipher" value="vig">
-        
-        <div class="mb-3">
-          <label class="form-label"><strong>📥 Input Type:</strong></label><br>
-          <input type="radio" id="vig_text" name="input_type" value="text" checked onchange="toggleInputType('vig', this.value)">
-          <label for="vig_text" class="me-3">📝 Text Input</label>
-          <input type="radio" id="vig_file" name="input_type" value="file" onchange="toggleInputType('vig', this.value)">
-          <label for="vig_file">📁 File Upload</label>
-        </div>
-
-        <div id="vig_text_area" class="mb-3">
-          <label class="form-label">Input Text</label>
-          <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
-        </div>
-
-        <div id="vig_file_area" class="mb-3" style="display:none">
-          <label class="form-label">Upload File</label>
-          <input type="file" class="form-control" name="file_input">
-          <small class="form-text text-success">✅ Key applied cyclically to all bytes</small>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Vigenère Keyword</label>
-          <input type="text" class="form-control" name="vig_key" placeholder="Enter keyword (letters only)">
-        </div>
-
-        <div id="vig_format_area" class="mb-3">
-          <label class="form-label">Output Format (Text mode only)</label><br>
-          <input type="radio" name="format" value="normal" checked> Normal
-          <input type="radio" name="format" value="nospace"> No Spaces
-          <input type="radio" name="format" value="groups"> 5-Letter Groups
-        </div>
-
-        <div class="mb-3">
-          <button class="btn btn-primary" type="submit" name="action" value="Encrypt">🔒 Encrypt</button>
-          <button class="btn btn-success" type="submit" name="action" value="Decrypt">🔓 Decrypt</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- ===== HILL CIPHER ===== -->
-    <div class="tab-pane fade" id="hill">
-      <h5>🏔️ Hill Cipher (2x2 Matrix)</h5>
-      <form method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="cipher" value="hill">
-        
-        <div class="mb-3">
-          <label class="form-label"><strong>📥 Input Type:</strong></label><br>
-          <input type="radio" id="hill_text" name="input_type" value="text" checked onchange="toggleInputType('hill', this.value)">
-          <label for="hill_text" class="me-3">📝 Text Input</label>
-          <input type="radio" id="hill_file" name="input_type" value="file" onchange="toggleInputType('hill', this.value)">
-          <label for="hill_file">📁 File Upload</label>
-        </div>
-
-        <div id="hill_text_area" class="mb-3">
-          <label class="form-label">Input Text</label>
-          <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
-        </div>
-
-        <div id="hill_file_area" class="mb-3" style="display:none">
-          <label class="form-label">Upload File</label>
-          <input type="file" class="form-control" name="file_input">
-          <small class="form-text text-success">✅ Matrix operations on byte pairs (mod 256)</small>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">2x2 Key Matrix</label>
-          <div class="row">
-            <div class="col"><input type="number" class="form-control" name="m00" placeholder="m[0,0]"></div>
-            <div class="col"><input type="number" class="form-control" name="m01" placeholder="m[0,1]"></div>
-            <div class="col"><input type="number" class="form-control" name="m10" placeholder="m[1,0]"></div>
-            <div class="col"><input type="number" class="form-control" name="m11" placeholder="m[1,1]"></div>
-          </div>
-          <small class="form-text text-muted">Matrix must be invertible (determinant coprime with 26/256)</small>
-        </div>
-
-        <div id="hill_format_area" class="mb-3">
-          <label class="form-label">Output Format (Text mode only)</label><br>
-          <input type="radio" name="format" value="normal" checked> Normal
-          <input type="radio" name="format" value="nospace"> No Spaces
-          <input type="radio" name="format" value="groups"> 5-Letter Groups
-        </div>
-
-        <div class="mb-3">
-          <button class="btn btn-primary" type="submit" name="action" value="Encrypt">🔒 Encrypt</button>
-          <button class="btn btn-success" type="submit" name="action" value="Decrypt">🔓 Decrypt</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- ===== PERMUTATION CIPHER ===== -->
-    <div class="tab-pane fade" id="perm">
-      <h5>🔄 Permutation Cipher</h5>
-      <form method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="cipher" value="perm">
-        
-        <div class="mb-3">
-          <label class="form-label"><strong>📥 Input Type:</strong></label><br>
-          <input type="radio" id="perm_text" name="input_type" value="text" checked onchange="toggleInputType('perm', this.value)">
-          <label for="perm_text" class="me-3">📝 Text Input</label>
-          <input type="radio" id="perm_file" name="input_type" value="file" onchange="toggleInputType('perm', this.value)">
-          <label for="perm_file">📁 File Upload</label>
-        </div>
-
-        <div id="perm_text_area" class="mb-3">
-          <label class="form-label">Input Text</label>
-          <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
-        </div>
-
-        <div id="perm_file_area" class="mb-3" style="display:none">
-          <label class="form-label">Upload File</label>
-          <input type="file" class="form-control" name="file_input">
-          <small class="form-text text-success">✅ Byte blocks rearranged according to key pattern</small>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Permutation Key</label>
-          <input type="text" class="form-control" name="perm_key" placeholder="e.g., &quot;3 1 4 2&quot; for 4-character blocks">
-          <small class="form-text text-muted">Numbers indicating position order (e.g., "2 1 3" means 2nd→1st, 1st→2nd, 3rd→3rd)</small>
-        </div>
-
-        <div id="perm_format_area" class="mb-3">
-          <label class="form-label">Output Format (Text mode only)</label><br>
-          <input type="radio" name="format" value="normal" checked> Normal
-          <input type="radio" name="format" value="nospace"> No Spaces
-          <input type="radio" name="format" value="groups"> 5-Letter Groups
-        </div>
-
-        <div class="mb-3">
-          <button class="btn btn-primary" type="submit" name="action" value="Encrypt">🔒 Encrypt</button>
-          <button class="btn btn-success" type="submit" name="action" value="Decrypt">🔓 Decrypt</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- ===== PLAYFAIR CIPHER ===== -->
-    <div class="tab-pane fade" id="playfair">
-      <h5>🎯 Playfair Cipher</h5>
-      <form method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="cipher" value="playfair">
-        
-        <div class="mb-3">
-          <label class="form-label"><strong>📥 Input Type:</strong></label><br>
-          <input type="radio" id="playfair_text" name="input_type" value="text" checked onchange="toggleInputType('playfair', this.value)">
-          <label for="playfair_text" class="me-3">📝 Text Input</label>
-          <input type="radio" id="playfair_file" name="input_type" value="file" onchange="toggleInputType('playfair', this.value)">
-          <label for="playfair_file">📁 File Upload</label>
-        </div>
-
-        <div id="playfair_text_area" class="mb-3">
-          <label class="form-label">Input Text</label>
-          <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
-        </div>
-
-        <div id="playfair_file_area" class="mb-3" style="display:none">
-          <label class="form-label">Upload File</label>
-          <input type="file" class="form-control" name="file_input">
-          <small class="form-text text-success">✅ File converted to Base64, then Playfair encrypted</small>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Playfair Key</label>
-          <input type="text" class="form-control" name="playfair_key" placeholder="Enter keyword for 5x5 key square">
-          <small class="form-text text-muted">Creates 5x5 grid, J=I, processes letter pairs</small>
-        </div>
-
-        <div id="playfair_format_area" class="mb-3">
-          <label class="form-label">Output Format (Text mode only)</label><br>
-          <input type="radio" name="format" value="normal" checked> Normal
-          <input type="radio" name="format" value="nospace"> No Spaces
-          <input type="radio" name="format" value="groups"> 5-Letter Groups
-        </div>
-
-        <div class="mb-3">
-          <button class="btn btn-primary" type="submit" name="action" value="Encrypt">🔒 Encrypt</button>
-          <button class="btn btn-success" type="submit" name="action" value="Decrypt">🔓 Decrypt</button>
-        </div>
-      </form>
-    </div>
-
-    <!-- ===== ONE-TIME PAD ===== -->
-    <div class="tab-pane fade" id="otp">
-      <h5>🎲 One-Time Pad (Perfect Security)</h5>
-      <form method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="cipher" value="otp">
-        
-        <div class="mb-3">
-          <label class="form-label"><strong>📥 Input Type:</strong></label><br>
-          <input type="radio" id="otp_text" name="input_type" value="text" checked onchange="toggleInputType('otp', this.value)">
-          <label for="otp_text" class="me-3">📝 Text Input</label>
-          <input type="radio" id="otp_file" name="input_type" value="file" onchange="toggleInputType('otp', this.value)">
-          <label for="otp_file">📁 File Upload</label>
-        </div>
-
-        <div id="otp_text_area" class="mb-3">
-          <label class="form-label">Input Text</label>
-          <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
-        </div>
-
-        <div id="otp_file_area" class="mb-3" style="display:none">
-          <label class="form-label">Upload File to Encrypt/Decrypt</label>
-          <input type="file" class="form-control" name="file_input">
-          <small class="form-text text-success">✅ True random key XOR with every byte</small>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Upload OTP Key File</label>
-          <input type="file" class="form-control" name="otp_key_file" required>
-          <small class="form-text text-warning">⚠️ Key must be at least as long as input data and truly random</small>
-        </div>
-
-        <div id="otp_format_area" class="mb-3">
-          <label class="form-label">Output Format (Text mode only)</label><br>
-          <input type="radio" name="format" value="normal" checked> Normal
-          <input type="radio" name="format" value="nospace"> No Spaces
-          <input type="radio" name="format" value="groups"> 5-Letter Groups
-        </div>
-
-        <div class="mb-3">
-          <button class="btn btn-primary" type="submit" name="action" value="Encrypt">🔒 Encrypt</button>
-          <button class="btn btn-success" type="submit" name="action" value="Decrypt">🔓 Decrypt</button>
-        </div>
-      </form>
-    </div>
-
-  </div>
-
-  <!-- OUTPUT SECTION -->
-  {% if output %}
-  <div class="card mt-4 p-3">
-    <h5>📤 Result:</h5>
     
-    {% if output.type == 'text' %}
-      <!-- TEXT OUTPUT -->
-      <textarea class="form-control" rows="6" readonly>{{ output.message }}</textarea>
-      <form method="POST" action="{{ url_for('save') }}">
-        <input type="hidden" name="output" value="{{ output.message }}">
-        <button type="submit" class="btn btn-secondary mt-2">💾 Download as text file</button>
-      </form>
-      
-    {% elif output.type == 'binary' %}
-      <!-- BINARY OUTPUT -->
-      <div class="alert alert-success">
-        <strong>{{ output.message }}</strong>
-      </div>
-      <form method="POST" action="{{ url_for('download_binary') }}">
-        <input type="hidden" name="filename" value="{{ output.filename }}">
-        <input type="hidden" name="data" value="{{ output.data }}">
-        <button type="submit" class="btn btn-primary">📁 Download {{ output.filename }}</button>
-      </form>
-    {% endif %}
-  </div>
-  {% endif %}
+    <ul class="nav flex-column nav-pills" id="cipherTabs" role="tablist">
+      <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#shift" role="tab">Shift</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#sub" role="tab">Substitution</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#affine" role="tab">Affine</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#vig" role="tab">Vigenère</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#hill" role="tab">Hill</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#perm" role="tab">Permutation</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#playfair" role="tab">Playfair</a></li>
+      <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#otp" role="tab">One-Time Pad</a></li>
+    </ul>
+  </nav>
 
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} mb-4">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="tab-content">
+      <!-- ===== SHIFT CIPHER ===== -->
+      <div class="tab-pane fade show active content-pane" id="shift" role="tabpanel">
+        <h5 class="cipher-title">Shift Cipher</h5>
+        <form method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="cipher" value="shift">
+          
+          <!-- INPUT TYPE TOGGLE -->
+          <div class="mb-4">
+            <label class="form-label"><strong>Input Type:</strong></label><br>
+            <input type="radio" id="shift_text" name="input_type" value="text" checked onchange="toggleInputType('shift', this.value)">
+            <label for="shift_text" class="me-3">Text Input</label>
+            <input type="radio" id="shift_file" name="input_type" value="file" onchange="toggleInputType('shift', this.value)">
+            <label for="shift_file">File Upload</label>
+          </div>
+
+          <!-- TEXT INPUT AREA -->
+          <div id="shift_text_area" class="mb-4">
+            <label class="form-label">Input Text</label>
+            <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
+          </div>
+
+          <!-- FILE INPUT AREA -->
+          <div id="shift_file_area" class="mb-4" style="display:none">
+            <label class="form-label">Upload File (any type:            .txt, .jpg, .pdf, .docx, etc.)</label>
+            <input type="file" class="form-control" name="file_input">
+            <small class="form-text">Encrypted file will be saved as .dat format</small>
+          </div>
+
+          <!-- CIPHER PARAMETERS -->
+          <div class="mb-4">
+            <label class="form-label">Shift Key</label>
+            <input type="number" class="form-control" name="shift_key" min="0" max="255" placeholder="0-25 for text, 0-255 for files">
+          </div>
+
+          <!-- OUTPUT FORMAT (Text mode only) -->
+          <div id="shift_format_area" class="mb-4">
+            <label class="form-label">Output Format (Text mode only)</label><br>
+            <input type="radio" name="format" value="normal" checked> Normal
+            <input type="radio" name="format" value="nospace"> No Spaces
+            <input type="radio" name="format" value="groups"> 5-Letter Groups
+          </div>
+
+          <!-- ACTION BUTTONS -->
+          <div class="mb-3">
+            <button class="btn btn-primary" type="submit" name="action" value="Encrypt">Encrypt</button>
+            <button class="btn btn-success" type="submit" name="action" value="Decrypt">Decrypt</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ===== SUBSTITUTION CIPHER ===== -->
+      <div class="tab-pane fade content-pane" id="sub" role="tabpanel">
+        <h5 class="cipher-title">Substitution Cipher</h5>
+        <form method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="cipher" value="sub">
+          
+          <div class="mb-4">
+            <label class="form-label"><strong>Input Type:</strong></label><br>
+            <input type="radio" id="sub_text" name="input_type" value="text" checked onchange="toggleInputType('sub', this.value)">
+            <label for="sub_text" class="me-3">Text Input</label>
+            <input type="radio" id="sub_file" name="input_type" value="file" onchange="toggleInputType('sub', this.value)">
+            <label for="sub_file">File Upload</label>
+          </div>
+
+          <div id="sub_text_area" class="mb-4">
+            <label class="form-label">Input Text</label>
+            <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
+          </div>
+
+          <div id="sub_file_area" class="mb-4" style="display:none">
+            <label class="form-label">Upload File</label>
+            <input type="file" class="form-control" name="file_input">
+            <small class="form-text">Binary substitution using 26-letter key pattern</small>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">Substitution Key (26 unique letters)</label>
+            <input type="text" class="form-control" name="sub_key" placeholder="e.g., ZYXWVUTSRQPONMLKJIHGFEDCBA">
+            <small class="form-text">Each letter A-Z maps to corresponding position in key</small>
+          </div>
+
+          <div id="sub_format_area" class="mb-4">
+            <label class="form-label">Output Format (Text mode only)</label><br>
+            <input type="radio" name="format" value="normal" checked> Normal
+            <input type="radio" name="format" value="nospace"> No Spaces
+            <input type="radio" name="format" value="groups"> 5-Letter Groups
+          </div>
+
+          <div class="mb-3">
+            <button class="btn btn-primary" type="submit" name="action" value="Encrypt">Encrypt</button>
+            <button class="btn btn-success" type="submit" name="action" value="Decrypt">Decrypt</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ===== AFFINE CIPHER ===== -->
+      <div class="tab-pane fade content-pane" id="affine" role="tabpanel">
+        <h5 class="cipher-title">Affine Cipher</h5>
+        <form method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="cipher" value="affine">
+          
+          <div class="mb-4">
+            <label class="form-label"><strong>Input Type:</strong></label><br>
+            <input type="radio" id="affine_text" name="input_type" value="text" checked onchange="toggleInputType('affine', this.value)">
+            <label for="affine_text" class="me-3">Text Input</label>
+            <input type="radio" id="affine_file" name="input_type" value="file" onchange="toggleInputType('affine', this.value)">
+            <label for="affine_file">File Upload</label>
+          </div>
+
+          <div id="affine_text_area" class="mb-4">
+            <label class="form-label">Input Text</label>
+            <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
+          </div>
+
+          <div id="affine_file_area" class="mb-4" style="display:none">
+            <label class="form-label">Upload File</label>
+            <input type="file" class="form-control" name="file_input">
+            <small class="form-text">Binary affine: (a*x + b) mod 256</small>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <label class="form-label">Parameter a</label>
+              <input type="number" class="form-control" name="a" placeholder="Must be coprime with 26/256">
+            </div>
+            <div class="col-md-6 mb-4">
+              <label class="form-label">Parameter b</label>
+              <input type="number" class="form-control" name="b" placeholder="Shift value">
+            </div>
+          </div>
+
+          <div id="affine_format_area" class="mb-4">
+            <label class="form-label">Output Format (Text mode only)</label><br>
+            <input type="radio" name="format" value="normal" checked> Normal
+            <input type="radio" name="format" value="nospace"> No Spaces
+            <input type="radio" name="format" value="groups"> 5-Letter Groups
+          </div>
+
+          <div class="mb-3">
+            <button class="btn btn-primary" type="submit" name="action" value="Encrypt">Encrypt</button>
+            <button class="btn btn-success" type="submit" name="action" value="Decrypt">Decrypt</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ===== VIGENÈRE CIPHER ===== -->
+      <div class="tab-pane fade content-pane" id="vig" role="tabpanel">
+        <h5 class="cipher-title">Vigenère Cipher</h5>
+        <form method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="cipher" value="vig">
+          
+          <div class="mb-4">
+            <label class="form-label"><strong>Input Type:</strong></label><br>
+            <input type="radio" id="vig_text" name="input_type" value="text" checked onchange="toggleInputType('vig', this.value)">
+            <label for="vig_text" class="me-3">Text Input</label>
+            <input type="radio" id="vig_file" name="input_type" value="file" onchange="toggleInputType('vig', this.value)">
+            <label for="vig_file">File Upload</label>
+          </div>
+
+          <div id="vig_text_area" class="mb-4">
+            <label class="form-label">Input Text</label>
+            <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
+          </div>
+
+          <div id="vig_file_area" class="mb-4" style="display:none">
+            <label class="form-label">Upload File</label>
+            <input type="file" class="form-control" name="file_input">
+            <small class="form-text">Key applied cyclically to all bytes</small>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">Vigenère Keyword</label>
+            <input type="text" class="form-control" name="vig_key" placeholder="Enter keyword (letters only)">
+          </div>
+
+          <div id="vig_format_area" class="mb-4">
+            <label class="form-label">Output Format (Text mode only)</label><br>
+            <input type="radio" name="format" value="normal" checked> Normal
+            <input type="radio" name="format" value="nospace"> No Spaces
+            <input type="radio" name="format" value="groups"> 5-Letter Groups
+          </div>
+
+          <div class="mb-3">
+            <button class="btn btn-primary" type="submit" name="action" value="Encrypt">Encrypt</button>
+            <button class="btn btn-success" type="submit" name="action" value="Decrypt">Decrypt</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ===== HILL CIPHER ===== -->
+      <div class="tab-pane fade content-pane" id="hill" role="tabpanel">
+        <h5 class="cipher-title">Hill Cipher (2x2 Matrix)</h5>
+        <form method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="cipher" value="hill">
+          
+          <div class="mb-4">
+            <label class="form-label"><strong>Input Type:</strong></label><br>
+            <input type="radio" id="hill_text" name="input_type" value="text" checked onchange="toggleInputType('hill', this.value)">
+            <label for="hill_text" class="me-3">Text Input</label>
+            <input type="radio" id="hill_file" name="input_type" value="file" onchange="toggleInputType('hill', this.value)">
+            <label for="hill_file">File Upload</label>
+          </div>
+
+          <div id="hill_text_area" class="mb-4">
+            <label class="form-label">Input Text</label>
+            <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
+          </div>
+
+          <div id="hill_file_area" class="mb-4" style="display:none">
+            <label class="form-label">Upload File</label>
+            <input type="file" class="form-control" name="file_input">
+            <small class="form-text">Matrix operations on byte pairs (mod 256)</small>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">2x2 Key Matrix</label>
+            <div class="row">
+              <div class="col-md-3 mb-3"><input type="number" class="form-control" name="m00" placeholder="m[0,0]"></div>
+              <div class="col-md-3 mb-3"><input type="number" class="form-control" name="m01" placeholder="m[0,1]"></div>
+              <div class="col-md-3 mb-3"><input type="number" class="form-control" name="m10" placeholder="m[1,0]"></div>
+              <div class="col-md-3 mb-3"><input type="number" class="form-control" name="m11" placeholder="m[1,1]"></div>
+            </div>
+            <small class="form-text">Matrix must be invertible (determinant coprime with 26/256)</small>
+          </div>
+
+          <div id="hill_format_area" class="mb-4">
+            <label class="form-label">Output Format (Text mode only)</label><br>
+            <input type="radio" name="format" value="normal" checked> Normal
+            <input type="radio" name="format" value="nospace"> No Spaces
+            <input type="radio" name="format" value="groups"> 5-Letter Groups
+          </div>
+
+          <div class="mb-3">
+            <button class="btn btn-primary" type="submit" name="action" value="Encrypt">Encrypt</button>
+            <button class="btn btn-success" type="submit" name="action" value="Decrypt">Decrypt</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ===== PERMUTATION CIPHER ===== -->
+      <div class="tab-pane fade content-pane" id="perm" role="tabpanel">
+        <h5 class="cipher-title">Permutation Cipher</h5>
+        <form method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="cipher" value="perm">
+          
+          <div class="mb-4">
+            <label class="form-label"><strong>Input Type:</strong></label><br>
+            <input type="radio" id="perm_text" name="input_type" value="text" checked onchange="toggleInputType('perm', this.value)">
+            <label for="perm_text" class="me-3">Text Input</label>
+            <input type="radio" id="perm_file" name="input_type" value="file" onchange="toggleInputType('perm', this.value)">
+            <label for="perm_file">File Upload</label>
+          </div>
+
+          <div id="perm_text_area" class="mb-4">
+            <label class="form-label">Input Text</label>
+            <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
+          </div>
+
+          <div id="perm_file_area" class="mb-4" style="display:none">
+            <label class="form-label">Upload File</label>
+            <input type="file" class="form-control" name="file_input">
+            <small class="form-text">Byte blocks rearranged according to key pattern</small>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">Permutation Key</label>
+            <input type="text" class="form-control" name="perm_key" placeholder="e.g., &quot;3 1 4 2&quot; for 4-character blocks">
+            <small class="form-text">Numbers indicating position order (e.g., &quot;2 1 3&quot; means 2nd→1st, 1st→2nd, 3rd→3rd)</small>
+          </div>
+
+          <div id="perm_format_area" class="mb-4">
+            <label class="form-label">Output Format (Text mode only)</label><br>
+            <input type="radio" name="format" value="normal" checked> Normal
+            <input type="radio" name="format" value="nospace"> No Spaces
+            <input type="radio" name="format" value="groups"> 5-Letter Groups
+          </div>
+
+          <div class="mb-3">
+            <button class="btn btn-primary" type="submit" name="action" value="Encrypt">Encrypt</button>
+            <button class="btn btn-success" type="submit" name="action" value="Decrypt">Decrypt</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ===== PLAYFAIR CIPHER ===== -->
+      <div class="tab-pane fade content-pane" id="playfair" role="tabpanel">
+        <h5 class="cipher-title">Playfair Cipher</h5>
+        <form method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="cipher" value="playfair">
+          
+          <div class="mb-4">
+            <label class="form-label"><strong>Input Type:</strong></label><br>
+            <input type="radio" id="playfair_text" name="input_type" value="text" checked onchange="toggleInputType('playfair', this.value)">
+            <label for="playfair_text" class="me-3">Text Input</label>
+            <input type="radio" id="playfair_file" name="input_type" value="file" onchange="toggleInputType('playfair', this.value)">
+            <label for="playfair_file">File Upload</label>
+          </div>
+
+          <div id="playfair_text_area" class="mb-4">
+            <label class="form-label">Input Text</label>
+            <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
+          </div>
+
+          <div id="playfair_file_area" class="mb-4" style="display:none">
+            <label class="form-label">Upload File</label>
+            <input type="file" class="form-control" name="file_input">
+            <small class="form-text">File converted to Base64, then Playfair encrypted</small>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">Playfair Key</label>
+            <input type="text" class="form-control" name="playfair_key" placeholder="Enter keyword for 5x5 key square">
+            <small class="form-text">Creates 5x5 grid, J=I, processes letter pairs</small>
+          </div>
+
+          <div id="playfair_format_area" class="mb-4">
+            <label class="form-label">Output Format (Text mode only)</label><br>
+            <input type="radio" name="format" value="normal" checked> Normal
+            <input type="radio" name="format" value="nospace"> No Spaces
+            <input type="radio" name="format" value="groups"> 5-Letter Groups
+          </div>
+
+          <div class="mb-3">
+            <button class="btn btn-primary" type="submit" name="action" value="Encrypt">Encrypt</button>
+            <button class="btn btn-success" type="submit" name="action" value="Decrypt">Decrypt</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ===== ONE-TIME PAD ===== -->
+      <div class="tab-pane fade content-pane" id="otp" role="tabpanel">
+        <h5 class="cipher-title">One-Time Pad (Perfect Security)</h5>
+                <form method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="cipher" value="otp">
+          
+          <div class="mb-4">
+            <label class="form-label"><strong>Input Type:</strong></label><br>
+            <input type="radio" id="otp_text" name="input_type" value="text" checked onchange="toggleInputType('otp', this.value)">
+            <label for="otp_text" class="me-3">Text Input</label>
+            <input type="radio" id="otp_file" name="input_type" value="file" onchange="toggleInputType('otp', this.value)">
+            <label for="otp_file">File Upload</label>
+          </div>
+
+          <div id="otp_text_area" class="mb-4">
+            <label class="form-label">Input Text</label>
+            <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
+          </div>
+
+          <div id="otp_file_area" class="mb-4" style="display:none">
+            <label class="form-label">Upload File to Encrypt/Decrypt</label>
+            <input type="file" class="form-control" name="file_input">
+            <small class="form-text">True random key XOR with every byte</small>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">Upload OTP Key File</label>
+            <input type="file" class="form-control" name="otp_key_file" required>
+            <small class="form-text">Key must be at least as long as input data and truly random</small>
+          </div>
+
+          <div id="otp_format_area" class="mb-4">
+            <label class="form-label">Output Format (Text mode only)</label><br>
+            <input type="radio" name="format" value="normal" checked> Normal
+            <input type="radio" name="format" value="nospace"> No Spaces
+            <input type="radio" name="format" value="groups"> 5-Letter Groups
+          </div>
+
+          <div class="mb-3">
+            <button class="btn btn-primary" type="submit" name="action" value="Encrypt">Encrypt</button>
+            <button class="btn btn-success" type="submit" name="action" value="Decrypt">Decrypt</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- OUTPUT SECTION -->
+    {% if output %}
+    <div class="output-section">
+      <h5 class="output-title">Result:</h5>
+      
+      {% if output.type == 'text' %}
+        <!-- TEXT OUTPUT -->
+        <textarea class="form-control" rows="6" readonly>{{ output.message }}</textarea>
+        <form method="POST" action="{{ url_for('save') }}">
+          <input type="hidden" name="output" value="{{ output.message }}">
+          <button type="submit" class="btn btn-secondary mt-2">Download as text file</button>
+        </form>
+        
+      {% elif output.type == 'binary' %}
+        <!-- BINARY OUTPUT -->
+        <div class="alert alert-success">
+          <strong>{{ output.message }}</strong>
+        </div>
+        <form method="POST" action="{{ url_for('download_binary') }}">
+          <input type="hidden" name="filename" value="{{ output.filename }}">
+          <input type="hidden" name="data" value="{{ output.data }}">
+          <button type="submit" class="btn btn-primary">Download {{ output.filename }}</button>
+        </form>
+      {% endif %}
+    </div>
+    {% endif %}
+  </main>
 </div>
 
-<!-- JavaScript for Toggle Functionality -->
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JavaScript for Toggle Functionality -->
 <script>
 function toggleInputType(cipherName, inputType) {
   const textArea = document.getElementById(cipherName + '_text_area');

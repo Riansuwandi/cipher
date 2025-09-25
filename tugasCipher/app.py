@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.secret_key = "change-this"
 
 # ===== Utility Functions =====
-ALPHA = ascii_uppercase.replace("J", "")  # untuk Playfair
+ALPHA = ascii_uppercase.replace("J", "")  
 A2I = {c: i for i, c in enumerate(ascii_uppercase)}
 
 def char_to_num(c): return A2I[c.upper()]
@@ -302,9 +302,8 @@ def affine_binary(data: bytes, a: int, b: int, enc=True) -> bytes:
 
 def hill_binary(data: bytes, M, enc=True) -> bytes:
     """Hill cipher untuk data binary (2x2 matrix, mod 256)"""
-    # Pastikan data panjangnya genap
     if len(data) % 2:
-        data = data + b'\x00'  # padding dengan null byte
+        data = data + b'\x00'  
     
     if not enc:
         # Hitung inverse matrix mod 256
@@ -326,7 +325,6 @@ def hill_binary(data: bytes, M, enc=True) -> bytes:
 def permutation_binary(data: bytes, key_nums, enc=True) -> bytes:
     """Permutation cipher untuk data binary"""
     n = len(key_nums)
-    # Padding data agar bisa dibagi blok n
     while len(data) % n:
         data = data + b'\x00'
     
@@ -368,7 +366,6 @@ def playfair_binary(data: bytes, key: str, enc=True) -> bytes:
         # playfair decrypt -> base64 decode -> binary
         try:
             decrypted_text = playfair(data.decode('ascii'), key, enc=False)
-            # Remove padding jika ada
             decrypted_text = decrypted_text.rstrip('X')
             return base64.b64decode(decrypted_text)
         except Exception as e:
@@ -476,7 +473,7 @@ def index():
                 data = f.read()
                 is_binary = True
                 
-            else:  # text input
+            else:
                 data = request.form.get("input_text", "")
                 if not data:
                     raise ValueError("No text input provided")
@@ -517,14 +514,12 @@ def index():
                 
             elif cipher == "otp":
                 if is_binary:
-                    # Untuk binary OTP, baca key sebagai binary data
                     if "otp_key_file" in request.files:
                         f = request.files["otp_key_file"]
-                        key = f.read()  # Read as bytes
+                        key = f.read()  
                     else:
                         raise ValueError("OTP key file required for binary mode")
                 else:
-                    # Untuk text OTP, baca key sebagai text
                     if "otp_key_file" in request.files:
                         f = request.files["otp_key_file"]
                         key = f.read().decode("utf-8")
@@ -535,7 +530,6 @@ def index():
             else:
                 raise ValueError("Unknown cipher")
 
-            # Prepare output
             if is_binary:
                 if action == "Encrypt":
                     # Create cipher file with metadata
