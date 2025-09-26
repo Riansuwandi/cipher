@@ -302,9 +302,12 @@ def affine_binary(data: bytes, a: int, b: int, enc=True) -> bytes:
 
 def hill_binary(data: bytes, M, enc=True) -> bytes:
     """Hill cipher untuk data binary (2x2 matrix, mod 256)"""
+    original_length = len(data)
+    padded_data = data
+
     if len(data) % 2:
-        data = data + b'\x00'  
-    
+        padded_data += b'\x00'  
+
     if not enc:
         # Hitung inverse matrix mod 256
         det = int(np.round(np.linalg.det(M))) % 256
@@ -315,12 +318,12 @@ def hill_binary(data: bytes, M, enc=True) -> bytes:
         M = (det_inv * adj) % 256
     
     result = []
-    for i in range(0, len(data), 2):
-        v = np.array([data[i], data[i+1]])
+    for i in range(0, len(padded_data), 2):
+        v = np.array([padded_data[i], padded_data[i+1]])
         w = np.dot(M, v) % 256
         result.extend([int(w[0]), int(w[1])])
     
-    return bytes(result)
+    return bytes(result[:original_length])
 
 def permutation_binary(data: bytes, key_nums, enc=True) -> bytes:
     """Permutation cipher untuk data binary"""
@@ -366,7 +369,6 @@ def playfair_binary(data: bytes, key: str, enc=True) -> bytes:
         # playfair decrypt -> base64 decode -> binary
         try:
             decrypted_text = playfair(data.decode('ascii'), key, enc=False)
-            decrypted_text = decrypted_text.rstrip('X')
             return base64.b64decode(decrypted_text)
         except Exception as e:
             raise ValueError(f"Playfair binary decryption failed: {e}")
@@ -477,25 +479,10 @@ def index():
                     raise ValueError("No file selected")
                 
                 original_filename = secure_filename(f.filename)
-                uploaded_bytes = f.read()
+                data = f.read()
                 is_binary = True
                 prev_input = None
                 
-                if action == "Decrypt":
-                    try:
-                        original_filename, inner_cipher_data = extract_from_cipher_file(uploaded_bytes)
-                    except Exception as e:
-                        raise ValueError("File bukan format .dat yang valid atau korup") from e
-                    
-                    data = inner_cipher_data
-
-                    decrypt_original_filename = original_filename
-
-                else:
-                    original_filename = secure_filename(f.filename)
-                    data = uploaded_bytes
-                    decrypt_original_filename = None
-
             else:
                 data = request.form.get("input_text", "")
                 if not data:
@@ -579,7 +566,7 @@ def index():
                 else:  # Decrypt
                     # Extract original filename and data from encrypted file
                     original_filename, result = extract_from_cipher_file(data)
-                    download_filename = "DECRYPTED_" + (decrypt_original_filename or "result")
+                    download_filename = "DECRYPTED_" + original_filename
                     
                     output = {
                         'type': 'binary',
@@ -613,7 +600,7 @@ def index():
         prev_key_perm=prev_key_perm,
         prev_key_playfair=prev_key_playfair,
         prev_key_otp=prev_key_otp
-    )
+        )
 
 @app.route("/download_binary", methods=["POST"])
 def download_binary():
