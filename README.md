@@ -96,6 +96,8 @@ Menggunakan kunci acak sepanjang pesan. Proses enkripsi dilakukan dengan operasi
 
 ![key](https://github.com/user-attachments/assets/ea47df28-cbcb-452a-bf22-5029f7c4d32f)
 
+*Note: untuk key dari OTP bisa menggunakan file key yang tersedia dalam repository, [file OTP key](https://github.com/Riansuwandi/cipher/blob/632ad43dde42f1781c50b5b6fe658f390ca4fa0a/tugasCipher/otp_key.txt)*
+
 6. Pilih format output lalu klik tombol `encrypt` atau `decrypt`
 
 ![outputOption](https://github.com/user-attachments/assets/4e41c492-4153-4dcb-b13d-ced0c739ab11)
