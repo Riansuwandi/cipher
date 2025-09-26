@@ -65,7 +65,7 @@
           <!-- TEXT INPUT AREA -->
           <div id="shift_text_area" class="mb-4">
             <label class="form-label">Input Text</label>
-            <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
+            <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here...">{{ prev_input or '' }}</textarea>
           </div>
 
           <!-- FILE INPUT AREA -->
@@ -78,7 +78,7 @@
           <!-- CIPHER PARAMETERS -->
           <div class="mb-4">
             <label class="form-label">Shift Key</label>
-            <input type="number" class="form-control" name="shift_key" min="0" max="255" placeholder="0-25 for text, 0-255 for files">
+            <input type="number" class="form-control" name="shift_key" min="0" max="255" placeholder="0-25 for text, 0-255 for files" value="{{ prev_key_shift or '' }}">
           </div>
 
           <!-- OUTPUT FORMAT (Text mode only) -->
@@ -124,7 +124,7 @@
 
           <div class="mb-4">
             <label class="form-label">Substitution Key (26 unique letters)</label>
-            <input type="text" class="form-control" name="sub_key" placeholder="e.g., ZYXWVUTSRQPONMLKJIHGFEDCBA">
+            <input type="text" class="form-control" name="sub_key" placeholder="e.g., ZYXWVUTSRQPONMLKJIHGFEDCBA" value="{{ prev_key_sub or '' }}">
             <small class="form-text">Each letter A-Z maps to corresponding position in key</small>
           </div>
 
@@ -170,11 +170,11 @@
           <div class="row">
             <div class="col-md-6 mb-4">
               <label class="form-label">Parameter a</label>
-              <input type="number" class="form-control" name="a" placeholder="Must be coprime with 26/256">
+              <input type="number" class="form-control" name="a" placeholder="Must be coprime with 26/256" value="{{ prev_key_affine_a or '' }}">
             </div>
             <div class="col-md-6 mb-4">
               <label class="form-label">Parameter b</label>
-              <input type="number" class="form-control" name="b" placeholder="Shift value">
+              <input type="number" class="form-control" name="b" placeholder="Shift value" value="{{ prev_key_affine_b or '' }}">
             </div>
           </div>
 
@@ -219,7 +219,7 @@
 
           <div class="mb-4">
             <label class="form-label">Vigenère Keyword</label>
-            <input type="text" class="form-control" name="vig_key" placeholder="Enter keyword (letters only)">
+            <input type="text" class="form-control" name="vig_key" placeholder="Enter keyword (letters only)" value="{{ prev_key_vig or '' }}">
           </div>
 
           <div id="vig_format_area" class="mb-4">
@@ -264,10 +264,10 @@
           <div class="mb-4">
             <label class="form-label">2x2 Key Matrix</label>
             <div class="row">
-              <div class="col-md-3 mb-3"><input type="number" class="form-control" name="m00" placeholder="m[0,0]"></div>
-              <div class="col-md-3 mb-3"><input type="number" class="form-control" name="m01" placeholder="m[0,1]"></div>
-              <div class="col-md-3 mb-3"><input type="number" class="form-control" name="m10" placeholder="m[1,0]"></div>
-              <div class="col-md-3 mb-3"><input type="number" class="form-control" name="m11" placeholder="m[1,1]"></div>
+              <div class="col-md-3 mb-3"><input type="number" class="form-control" name="m00" placeholder="m[0,0]" value="{{ prev_key_hill[0][0] if prev_key_hill else '' }}"></div>
+              <div class="col-md-3 mb-3"><input type="number" class="form-control" name="m01" placeholder="m[0,1]" value="{{ prev_key_hill[0][1] if prev_key_hill else '' }}"></div>
+              <div class="col-md-3 mb-3"><input type="number" class="form-control" name="m10" placeholder="m[1,0]" value="{{ prev_key_hill[1][0] if prev_key_hill else '' }}"></div>
+              <div class="col-md-3 mb-3"><input type="number" class="form-control" name="m11" placeholder="m[1,1]" value="{{ prev_key_hill[1][1] if prev_key_hill else '' }}"></div>
             </div>
             <small class="form-text">Matrix must be invertible (determinant coprime with 26/256)</small>
           </div>
@@ -313,7 +313,7 @@
 
           <div class="mb-4">
             <label class="form-label">Permutation Key</label>
-            <input type="text" class="form-control" name="perm_key" placeholder="e.g., &quot;3 1 4 2&quot; for 4-character blocks">
+            <input type="text" class="form-control" name="perm_key" placeholder="e.g., &quot;3 1 4 2&quot; for 4-character blocks" value="{{ prev_key_perm or '' }}">
             <small class="form-text">Numbers indicating position order (e.g., &quot;2 1 3&quot; means 2nd→1st, 1st→2nd, 3rd→3rd)</small>
           </div>
 
@@ -358,7 +358,7 @@
 
           <div class="mb-4">
             <label class="form-label">Playfair Key</label>
-            <input type="text" class="form-control" name="playfair_key" placeholder="Enter keyword for 5x5 key square">
+            <input type="text" class="form-control" name="playfair_key" placeholder="Enter keyword for 5x5 key square" value="{{ prev_key_playfair or '' }}">
             <small class="form-text">Creates 5x5 grid, J=I, processes letter pairs</small>
           </div>
 
@@ -392,7 +392,7 @@
 
           <div id="otp_text_area" class="mb-4">
             <label class="form-label">Input Text</label>
-            <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here..."></textarea>
+            <textarea class="form-control" name="input_text" rows="3" placeholder="Type your message here...">{{ prev_key_otp or '' }}</textarea>
           </div>
 
           <div id="otp_file_area" class="mb-4" style="display:none">

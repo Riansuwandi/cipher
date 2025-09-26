@@ -453,6 +453,13 @@ def process_otp(data, key, enc=True, is_binary=False):
 @app.route("/", methods=["GET","POST"])
 def index():
     output = None
+    prev_input = None
+    prev_key_shift = prev_key_vig = prev_key_sub = None
+    prev_key_affine_a = prev_key_affine_b = None
+    prev_key_hill = None
+    prev_key_perm = None
+    prev_key_playfair = None
+    prev_key_otp = None
     
     if request.method == "POST":
         cipher = request.form["cipher"]
@@ -470,48 +477,73 @@ def index():
                     raise ValueError("No file selected")
                 
                 original_filename = secure_filename(f.filename)
-                data = f.read()
+                uploaded_bytes = f.read()
                 is_binary = True
+                prev_input = None
                 
+                if action == "Decrypt":
+                    try:
+                        original_filename, inner_cipher_data = extract_from_cipher_file(uploaded_bytes)
+                    except Exception as e:
+                        raise ValueError("File bukan format .dat yang valid atau korup") from e
+                    
+                    data = inner_cipher_data
+
+                    decrypt_original_filename = original_filename
+
+                else:
+                    original_filename = secure_filename(f.filename)
+                    data = uploaded_bytes
+                    decrypt_original_filename = None
+
             else:
                 data = request.form.get("input_text", "")
                 if not data:
                     raise ValueError("No text input provided")
                 is_binary = False
                 original_filename = None
+                prev_input = data
 
             # Process with appropriate cipher
             if cipher == "shift":
                 key = int(request.form["shift_key"])
                 result = process_shift(data, key, enc=(action=="Encrypt"), is_binary=is_binary)
+                prev_key_shift = key
                     
             elif cipher == "vig":
                 key = request.form["vig_key"]
                 result = process_vigenere(data, key, enc=(action=="Encrypt"), is_binary=is_binary)
-                    
+                prev_key_vig = key
+
             elif cipher == "sub":
                 key = request.form["sub_key"]
                 result = process_substitution(data, key, enc=(action=="Encrypt"), is_binary=is_binary)
-                
+                prev_key_sub = key
+
             elif cipher == "affine":
                 a = int(request.form["a"]); b = int(request.form["b"])
                 result = process_affine(data, a, b, enc=(action=="Encrypt"), is_binary=is_binary)
-                
+                prev_key_affine_a = a
+                prev_key_affine_b = b
+
             elif cipher == "hill":
                 M = np.array([
                     [int(request.form["m00"]),int(request.form["m01"])],
                     [int(request.form["m10"]),int(request.form["m11"])]
                 ])
                 result = process_hill(data, M, enc=(action=="Encrypt"), is_binary=is_binary)
-                
+                prev_key_hill = M.tolist()
+
             elif cipher == "perm":
                 key_nums = list(map(int, request.form["perm_key"].split()))
                 result = process_permutation(data, key_nums, enc=(action=="Encrypt"), is_binary=is_binary)
-                
+                prev_key_perm = " ".join(map(str, key_nums))
+
             elif cipher == "playfair":
                 key = request.form["playfair_key"]
                 result = process_playfair(data, key, enc=(action=="Encrypt"), is_binary=is_binary)
-                
+                prev_key_playfair = key
+
             elif cipher == "otp":
                 if is_binary:
                     if "otp_key_file" in request.files:
@@ -526,7 +558,8 @@ def index():
                     else:
                         raise ValueError("OTP key file required")
                 result = process_otp(data, key, enc=(action=="Encrypt"), is_binary=is_binary)
-                
+                prev_key_otp = key if not is_binary else None
+
             else:
                 raise ValueError("Unknown cipher")
 
@@ -546,7 +579,7 @@ def index():
                 else:  # Decrypt
                     # Extract original filename and data from encrypted file
                     original_filename, result = extract_from_cipher_file(data)
-                    download_filename = "DECRYPTED_" + original_filename
+                    download_filename = "DECRYPTED_" + (decrypt_original_filename or "result")
                     
                     output = {
                         'type': 'binary',
@@ -567,7 +600,20 @@ def index():
         except Exception as e:
             flash(str(e), "danger")
     
-    return render_template("index.html", output=output)
+    return render_template(
+        "index.html", 
+        output=output,
+        prev_input=prev_input, 
+        prev_key_shift=prev_key_shift,
+        prev_key_vig=prev_key_vig,
+        prev_key_sub=prev_key_sub,
+        prev_key_affine_a=prev_key_affine_a,
+        prev_key_affine_b=prev_key_affine_b,
+        prev_key_hill=prev_key_hill,
+        prev_key_perm=prev_key_perm,
+        prev_key_playfair=prev_key_playfair,
+        prev_key_otp=prev_key_otp
+    )
 
 @app.route("/download_binary", methods=["POST"])
 def download_binary():
